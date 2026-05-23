@@ -16,7 +16,15 @@ function Board({ board, onColumnClick }: BoardProps) {
               className="cell"
               onClick={() => onColumnClick(colIndex)}
             >
-              {cell}
+              <div
+                className={`cell ${
+                    cell === 'R'
+                    ? 'red-piece'
+                    : cell === 'Y'
+                    ? 'green-piece'
+                    : 'empty-piece'
+                }`}
+                />
             </div>
           ))}
         </div>
