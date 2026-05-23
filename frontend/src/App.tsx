@@ -1,6 +1,7 @@
 import type {Board, Player} from './services/gameService';
 import {createBoard, makeMove, checkWin} from './services/gameService';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
+import BoardComponent from './components/Board';
 import './App.css';
 
 function App() {
@@ -31,17 +32,7 @@ function App() {
         {winner && (
     <h2>Player {winner} Wins!</h2>
 )}
-        <div className="board">
-            {board.map((row, rowIndex) => (
-                <div key={rowIndex} className="row">
-                    {row.map((cell, colIndex) => (
-                        <div key={colIndex} className="cell" onClick={() => handleMove(colIndex)}>
-                            {cell}
-                        </div>
-                    ))}
-                </div>
-            ))}
-        </div>
+        <BoardComponent board={board} onColumnClick={handleMove} />
         <button onClick={handleReset}>Reset Game</button>
     </div>
   );
