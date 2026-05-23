@@ -2,6 +2,8 @@ import type {Board, Player} from './services/gameService';
 import {createBoard, makeMove, checkWin} from './services/gameService';
 import {useState} from 'react';
 import BoardComponent from './components/Board';
+import TopHeader from './components/TopHeader';
+import WinnerModal from './components/WinnerModal';
 import './App.css';
 
 function App() {
@@ -27,13 +29,11 @@ function App() {
     }
    return (
     <div className="App">
-        <h1>Connect Four</h1>
-        <p>Current Player: {currentPlayer}</p>
+        <TopHeader currentPlayer={currentPlayer} onReset={handleReset} />
         {winner && (
-    <h2>Player {winner} Wins!</h2>
-)}
+            <WinnerModal winner={winner} onReset={handleReset} />
+        )}
         <BoardComponent board={board} onColumnClick={handleMove} />
-        <button onClick={handleReset}>Reset Game</button>
     </div>
   );
 
