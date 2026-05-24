@@ -32,7 +32,7 @@ function App() {
             game.id,
             column
         );
-
+        console.log(updatedGame.board);
         setGame(updatedGame);
     }
     if (!game) {
