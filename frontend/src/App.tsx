@@ -1,41 +1,54 @@
-import type {Board, Player} from './services/gameService';
-import {createBoard, makeMove, checkWin} from './services/gameService';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import BoardComponent from './components/Board';
 import TopHeader from './components/TopHeader';
 import WinnerModal from './components/WinnerModal';
+import {
+  createGame,
+  makeMove,
+  type Game,
+} from './services/api';
 import './App.css';
 
 function App() {
-    const [board, setBoard] = useState<Board>(createBoard());
-    const [currentPlayer, setCurrentPlayer] = useState<Player>('R');
-    const [winner, setWinner] = useState<Player | null>(null);
-    function handleReset() {
-        setBoard(createBoard());
-        setCurrentPlayer('R');
-        setWinner(null);
-    }
-    function handleMove(column: number) {
-    if (winner) return;
-        const newBoard: Board = board.map(row => [...row]);
-        if (makeMove(newBoard, column, currentPlayer)) {
-            setBoard(newBoard);
-            if (checkWin(newBoard, currentPlayer)) {
-                setWinner(currentPlayer);
-            } else {
-                setCurrentPlayer(currentPlayer === 'R' ? 'Y' : 'R');
-            }
+    const [game, setGame] = useState<Game | null>(null);
+    useEffect(() => {
+        async function initializeGame() {
+            const newGame = await createGame();
+            setGame(newGame);
         }
+
+    initializeGame();
+    }, []);
+    async function handleReset() {
+        const newGame = await createGame();
+        setGame(newGame);
     }
+    async function handleMove(column: number) {
+        if (!game || game.gameOver) {
+            return;
+        }
+
+        const updatedGame = await makeMove(
+            game.id,
+            column
+        );
+
+        setGame(updatedGame);
+    }
+    if (!game) {
+        return <div>Loading...</div>;
+    }
+    else {
    return (
     <div className="App">
-        <TopHeader currentPlayer={currentPlayer} onReset={handleReset} />
-        {winner && (
-            <WinnerModal winner={winner} onReset={handleReset} />
+        <TopHeader currentPlayer={game.currentPlayer} onReset={handleReset} />
+        {game.winner && (
+            <WinnerModal winner={game.winner} onReset={handleReset} />
         )}
-        <BoardComponent board={board} onColumnClick={handleMove} />
+        <BoardComponent board={game.board} onColumnClick={handleMove} />
     </div>
   );
+}
 
 }
 
