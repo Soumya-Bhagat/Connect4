@@ -1,4 +1,4 @@
-import { createBoard, makeMove } from './connect4.js';
+import { createBoard, makeMove, checkWin, isBoardFull } from './connect4.js';
 import type { Game } from '../types/game.js';
 
 const games = new Map<string, Game>();
@@ -8,6 +8,8 @@ export function createGame(): Game {
     id: crypto.randomUUID(),
     board: createBoard(),
     currentPlayer: 'R',
+    winner: null,
+    gameOver: false,
   };
 
   games.set(game.id, game);
@@ -21,16 +23,26 @@ export function getGame(id: string): Game | undefined {
 
 export function playMove(gameId: string, column: number): boolean {
   const game = games.get(gameId);
-
-  if (!game) {
+  
+  if (!game || game.gameOver) {
     return false;
   }
-
-  const moveSuccessful = makeMove(game.board, column, game.currentPlayer);
-
-  if (moveSuccessful) {
-    game.currentPlayer = game.currentPlayer === 'R' ? 'Y' : 'R';
+  const player = game.currentPlayer;
+  const moveSuccessful = makeMove(game.board, column, player);
+  if (!moveSuccessful) {
+    return false;
   }
+  if (checkWin(game.board, player)) {
+    game.winner = player;
+    game.gameOver = true;
+  } else if (isBoardFull(game.board)) {
+    game.gameOver = true;
+  }
+  else {
+    game.currentPlayer = player === 'R' ? 'Y' : 'R';
+  }
+  
 
-  return moveSuccessful;
+  return true;
 }
+

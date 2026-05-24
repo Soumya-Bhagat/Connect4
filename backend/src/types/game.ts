@@ -4,4 +4,6 @@ export interface Game {
   id: string;
   board: Board;
   currentPlayer: Player;
+  winner: Player | null;
+  gameOver: boolean;
 }
