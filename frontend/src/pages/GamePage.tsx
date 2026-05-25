@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import BoardComponent from '../components/Board';
 import TopHeader from '../components/TopHeader';
 import WinnerModal from '../components/WinnerModal';
+import { useNavigate } from 'react-router-dom';
 import {
   createGame,
   getGame,
@@ -12,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import '../App.css';
 
 function GamePage() {
+    const navigate = useNavigate();
     const [game, setGame] = useState<Game | null>(null);
     const { id } = useParams();
     useEffect(() => {
@@ -37,6 +39,7 @@ function GamePage() {
 
     async function handleReset() {
         const newGame = await createGame();
+        navigate(`/game/${newGame.id}`);
         setGame(newGame);
     }
     async function handleMove(column: number) {

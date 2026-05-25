@@ -1,4 +1,4 @@
-import type { Player } from '../services/gameService';
+import type { Player } from '../services/api';
 
 interface WinnerModalProps {
   winner: Player | null;

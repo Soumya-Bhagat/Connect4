@@ -1,4 +1,4 @@
-import type { Board as BoardType } from '../services/gameService';
+import type { Board as BoardType } from '../services/api';
 
 interface BoardProps {
   board: BoardType;
