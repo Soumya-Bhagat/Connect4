@@ -77,6 +77,19 @@ export async function joinGame(
       }),
     }
   );
+  
 
+  return response.json();
+}
+
+export async function resetGame(
+  gameId: string
+): Promise<Game> {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/reset`,
+    {
+      method: 'POST',
+    }
+  );
   return response.json();
 }

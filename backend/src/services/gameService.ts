@@ -154,3 +154,33 @@ export function joinGame(
 
   return game;
 }
+
+export function resetGame(gameId: string): Game | undefined {
+  const game = getGame(gameId);
+
+  if (!game) {
+    return undefined;
+  }
+
+  game.board = createBoard();
+  game.currentPlayer = 'R';
+  game.winner = null;
+  game.gameOver = false;
+
+  db.prepare(`
+    UPDATE games
+    SET board_json = ?,
+        current_player = ?,
+        winner = ?,
+        game_over = ?
+    WHERE id = ?
+  `).run(
+    JSON.stringify(game.board),
+    game.currentPlayer,
+    null,
+    0,
+    game.id
+  );
+
+  return game;
+}

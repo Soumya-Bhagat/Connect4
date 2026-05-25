@@ -3,7 +3,8 @@ import {
   createGame,
   getGame,
   playMove,
-  joinGame
+  joinGame,
+  resetGame
 } from '../services/gameService.js';
 import { db } from '../db/database.js';
 
@@ -73,5 +74,18 @@ router.post(
     res.json(game);
   }
 );
+
+router.post('/games/:id/reset', (req, res) => {
+  const game = resetGame(req.params.id);
+
+  if (!game) {
+    res.status(400).json({
+      error: 'Cannot reset game'
+    });
+    return;
+  }
+
+  res.json(game);
+});
 
 export default router;

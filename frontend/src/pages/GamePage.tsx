@@ -7,6 +7,7 @@ import {
   createGame,
   getGame,
   makeMove,
+  resetGame,
   type Game,
 } from '../services/api';
 import { useParams } from 'react-router-dom';
@@ -41,9 +42,9 @@ function GamePage() {
 
     async function handleReset() {
         if (!game) return;
-        const newGame = await createGame(game.playerRed);
-        navigate(`/game/${newGame.id}`);
-        setGame(newGame);
+
+        const resetedGame = await resetGame(game.id);
+        setGame(resetedGame);
     }
     async function handleMove(column: number) {
         if (!game || game.gameOver || !isMyTurn) {
