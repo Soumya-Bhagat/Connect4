@@ -16,6 +16,8 @@ function GamePage() {
     const navigate = useNavigate();
     const [game, setGame] = useState<Game | null>(null);
     const { id } = useParams();
+    const username =
+  localStorage.getItem('username');
     useEffect(() => {
         async function loadGame() {
             if (id) {
@@ -38,12 +40,13 @@ function GamePage() {
     }, [id]);
 
     async function handleReset() {
-        const newGame = await createGame();
+        if (!game) return;
+        const newGame = await createGame(game.playerRed);
         navigate(`/game/${newGame.id}`);
         setGame(newGame);
     }
     async function handleMove(column: number) {
-        if (!game || game.gameOver) {
+        if (!game || game.gameOver || !isMyTurn) {
             return;
         }
 
@@ -57,7 +60,19 @@ function GamePage() {
     if (!game) {
         return <div>Loading...</div>;
     }
-    else {
+    const isMyTurn =
+    (game.currentPlayer === 'R' &&
+     username === game.playerRed)
+ ||
+    (game.currentPlayer === 'Y' &&
+     username === game.playerYellow);
+    console.log({
+  username,
+  playerRed: game.playerRed,
+  playerYellow: game.playerYellow,
+  currentPlayer: game.currentPlayer,
+  isMyTurn,
+});
    return (
     <div className="App">
         <TopHeader currentPlayer={game.currentPlayer} onReset={handleReset} />
@@ -67,7 +82,7 @@ function GamePage() {
         <BoardComponent board={game.board} onColumnClick={handleMove} />
     </div>
   );
-}
+
 
 }
 

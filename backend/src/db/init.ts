@@ -13,6 +13,10 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS games (
     id TEXT PRIMARY KEY,
 
+    player_red TEXT NOT NULL,
+
+    player_yellow TEXT NOT NULL,
+    
     board_json TEXT NOT NULL,
 
     current_player TEXT NOT NULL,

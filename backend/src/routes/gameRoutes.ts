@@ -2,14 +2,17 @@ import { Router } from 'express';
 import {
   createGame,
   getGame,
-  playMove
+  playMove,
+  joinGame
 } from '../services/gameService.js';
 import { db } from '../db/database.js';
 
 const router = Router();
 
 router.post('/games', (req, res) => {
-  const game = createGame();
+  const game = createGame(
+    req.body.playerRed
+  );
 
   res.status(201).json(game);
 });
@@ -51,5 +54,24 @@ router.get('/games/:id/moves', (req, res) => {
 
   res.json(moves);
 });
+
+router.post(
+  '/games/:id/join',
+  (req, res) => {
+    const game = joinGame(
+      req.params.id,
+      req.body.username
+    );
+
+    if (!game) {
+      res.status(400).json({
+        error: 'Cannot join game'
+      });
+      return;
+    }
+
+    res.json(game);
+  }
+);
 
 export default router;

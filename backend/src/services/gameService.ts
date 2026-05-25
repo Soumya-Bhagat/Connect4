@@ -4,6 +4,8 @@ import { db } from '../db/database.js';
 
 interface GameRow {
   id: string;
+  player_red: string;
+  player_yellow: string;
   board_json: string;
   current_player: string;
   winner: string | null;
@@ -19,9 +21,11 @@ interface MoveRow {
     created_at: string;
 }
 
-export function createGame(): Game {
+export function createGame(playerRed: string): Game {
   const game: Game = {
     id: crypto.randomUUID(),
+    playerRed,
+    playerYellow: '',
     board: createBoard(),
     currentPlayer: 'R',
     winner: null,
@@ -31,14 +35,18 @@ export function createGame(): Game {
     db.prepare(`
     INSERT INTO games (
         id,
+        player_red,
+        player_yellow,
         board_json,
         current_player,
         winner,
         game_over
     )
-    VALUES (?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     `).run(
     game.id,
+    game.playerRed,
+    game.playerYellow,
     JSON.stringify(game.board),
     game.currentPlayer,
     game.winner,
@@ -59,6 +67,8 @@ export function getGame(id: string): Game | undefined {
 
   return {
     id: row.id,
+    playerRed: row.player_red,
+    playerYellow: row.player_yellow,
     board: JSON.parse(row.board_json),
     currentPlayer: row.current_player as 'R' | 'Y',
     winner: row.winner as 'R' | 'Y' | null,
@@ -117,3 +127,30 @@ export function playMove(gameId: string, column: number): Game | undefined {
   return game;
 }
 
+export function joinGame(
+  gameId: string,
+  username: string
+): Game | undefined {
+  const game = getGame(gameId);
+
+  if (!game) {
+    return undefined;
+  }
+
+  if (game.playerYellow) {
+    return undefined;
+  }
+
+  game.playerYellow = username;
+
+  db.prepare(`
+    UPDATE games
+    SET player_yellow = ?
+    WHERE id = ?
+  `).run(
+    username,
+    gameId
+  );
+
+  return game;
+}
